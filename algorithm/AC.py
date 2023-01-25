@@ -138,8 +138,6 @@ class ActorCritic:
         actorLoss.backward()  # 计算actor网络的梯度
         self.criticOptimizer.step()  # 更新critic网络参数
         self.actorOptimizer.step()  # 更新actor网络参数
-        print('actor_loss:'+str(actorLoss.item()))
-        print('critic_loss:'+str(criticLoss.item()))
 
 class ReplayBuffer:
     def __init__(self, capacity,batchSize):

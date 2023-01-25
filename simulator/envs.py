@@ -331,7 +331,7 @@ class Region:
             sdStateList.append(nodeDemand)
         return np.array(sdStateList)
 
-    def cal_reward(self,theCourier,addMoney,addTime,overdueSymbol):
+    def cal_reward(self,theCourier,addMoney,addTime):
         self.cal_courier_efficiency()  # 更新骑手的效率,并计算平均效率
         if addMoney < 0:
             rewardOne = 0

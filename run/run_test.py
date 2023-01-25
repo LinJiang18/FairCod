@@ -92,7 +92,7 @@ while dayIndex < maxDay:  # 利用30天的订单
 
 
 
-            action = agent.take_action(stateMatchArray)
+            #action = agent.take_action(stateMatchArray)
 
 
 
