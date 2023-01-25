@@ -42,7 +42,7 @@ actorLr = 0.002
 criticLr = 0.002
 gamma = 0.9
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-agent = torch.load('../model/agent.pth')
+agent = torch.load('../model/agent_one.pth')
 replayBuffer = ReplayBuffer(memorySize, batchSize)
 
 
@@ -80,6 +80,7 @@ while dayIndex < maxDay:  # 利用30天的订单
             stateMatchArray = np.hstack((stateArray,orderStateArray))
 
 
+            '''
             rewardList = []
             for i in range(orderStateArray.shape[0]):
                 tempAddMoney = orderStateArray[i][2]
@@ -88,11 +89,11 @@ while dayIndex < maxDay:  # 利用30天的订单
                 reward = tempAddMoney * pow(0.98, tempAddTime) * (1 - tempSymbol)
                 rewardList.append(reward)
             action = rewardList.index(max(rewardList))
+            '''
 
 
 
-
-            #action = agent.take_action(stateMatchArray)
+            action = agent.take_action(stateMatchArray)
 
 
 
