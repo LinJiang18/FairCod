@@ -51,7 +51,7 @@ class Region:
         # 公平信息
         self.meanEfficiency = 0
         self.alpha = 1
-        self.beta = 0
+        self.beta = 0.1
         self.overdueOrder = 0
 
 
@@ -215,12 +215,14 @@ class Region:
         return newPendingCourier
 
 
-    def courier_state_compute(self,courierList): # 时间,骑手的位置,订单数,骑手的未来路径
+    def courier_state_compute(self,courierList): # 时间,骑手的位置,订单数,骑手效率，骑手的未来路径
         courierStateList = []
         for courier in courierList:
             time = courier.cityTime
             node = courier.node
             orderNum = len(courier.orderList)
+            efficiency = courier.accEfficiency
+            meanEfficiency = self.meanEfficiency
 
             # 计算路径编码
             route = courier.route.routeNodeList
@@ -252,7 +254,7 @@ class Region:
             else:
                 pass
 
-            courierState = [time,node,orderNum] + trajectoryList
+            courierState = [time,node,orderNum,efficiency,meanEfficiency] + trajectoryList
             courierStateList.append(courierState)
 
         courierStateList = np.array(courierStateList)
@@ -375,6 +377,8 @@ class Region:
             courier.route.routeMoney = 0
             courier.route.routeTime = 0
 
+        self.cal_courier_efficiency()
+
 
         # 更新骑手在节点中的位置,导入新订单
         self.clean_step_order_courier()
@@ -397,6 +401,8 @@ class Region:
             time = courier.cityTime
             node = courier.node
             orderNum = len(courier.orderList)
+            efficiency = courier.accEfficiency
+            meanEfficiency = self.meanEfficiency
             route = courier.route.routeNodeList
             routeNodeList = []  # 首先记录骑手当前位置
             for node, _ in route:
@@ -519,7 +525,7 @@ class Region:
             distance = cal_distance(theOrder.orderMerchant,courier.node)
             promisePeriod = theOrder.orderPromisePeriod
             nextActionState = [theOrder.orderMerchant,theOrder.orderUser,addMoney,addTime,distance,promisePeriod,overdueSymbol]
-            nextState = [time, node, orderNum] + trajectoryList + list(supplydemandStateArray) + nextActionState
+            nextState = [time, node, orderNum,efficiency,meanEfficiency] + trajectoryList + list(supplydemandStateArray) + nextActionState
             nextState = np.array(nextState)
             d.add_nextState(nextState)
             dispatchDict[courier] = d

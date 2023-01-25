@@ -42,8 +42,10 @@ actionDim = 7  # 动作维度
 stateDim = 223  # 状态维度
 T = 0  # 一天的时间计数
 
-actorLr = 0.002
-criticLr = 0.002
+# 标准：0.002
+
+actorLr = 0.001
+criticLr = 0.001
 gamma = 0.9
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 agent = ActorCritic(stateDim, actionDim, actorLr, criticLr, gamma, batchSize, device)
@@ -63,8 +65,6 @@ while dayIndex < maxDay:  # 利用30天的订单
     T = 0
 
     while T < maxTime:  # 这一天的时间
-        if (dayIndex == 0) and T == 50:
-            print('stop')
         dDict = {}
         stepRecorder.write("step" + str(T) + ':' + ' ')
         for order in env.dayOrder[env.cityTime]:  # 输入这个时段的订单
@@ -164,7 +164,7 @@ dayRecorder.close()
 
 
 
-torch.save(agent,'../model/agent_two.pth')
+torch.save(agent,'../model/agent_three.pth')
 
 
 
