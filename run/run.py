@@ -164,7 +164,7 @@ dayRecorder.close()
 
 
 
-torch.save(agent,'../model/agent_three.pth')
+torch.save(agent,'../model/agent_seven(0.3,0.001).pth')
 
 
 

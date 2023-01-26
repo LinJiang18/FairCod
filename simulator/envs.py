@@ -51,7 +51,7 @@ class Region:
         # 公平信息
         self.meanEfficiency = 0
         self.alpha = 1
-        self.beta = 0.1
+        self.beta = 0.2
         self.overdueOrder = 0
 
 

@@ -42,7 +42,7 @@ actorLr = 0.002
 criticLr = 0.002
 gamma = 0.9
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-agent = torch.load('../model/agent_three.pth')
+agent = torch.load('../model/agent_three(0.1).pth')
 replayBuffer = ReplayBuffer(memorySize, batchSize)
 
 
