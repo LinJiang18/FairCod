@@ -10,7 +10,7 @@ from simulator.utility import cal_distance,cal_best_route,cal_route_dir,process_
 
 
 dayIndex = 0  # 当前第几轮
-maxDay = 30 # 最大循环多少轮
+maxDay = 25 # 最大循环多少轮
 maxTime = 179 # 派单的轮数
 # hexagon grid
 
@@ -42,15 +42,17 @@ actionDim = 7  # 动作维度
 stateDim = 223  # 状态维度
 T = 0  # 一天的时间计数
 
-# 标准：0.002
-
+# ac:0.001
+#cr:0.0005
 actorLr = 0.001
 criticLr = 0.001
+
 gamma = 0.9
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 agent = ActorCritic(stateDim, actionDim, actorLr, criticLr, gamma, batchSize, device)
 replayBuffer = ReplayBuffer(memorySize, batchSize)
 dayRecorder = open('../info/day_reward.txt', 'a+')
+dayRecorder.truncate(0)
 
 while dayIndex < maxDay:  # 利用30天的订单
 
@@ -61,12 +63,14 @@ while dayIndex < maxDay:  # 利用30天的订单
     env.reset_clean()  # 将这一天的内容重置
     dayReward = []
     stepRecorder = open(f'../info/step_info/day{dayIndex}.txt', 'a+')
+    stepRecorder.truncate(0)
     print(f'Day {dayIndex}:')
     T = 0
 
+
     while T < maxTime:  # 这一天的时间
         dDict = {}
-        stepRecorder.write("step" + str(T) + ':' + ' ')
+        stepRecorder.write("step_info" + str(T) + ':' + ' ')
         for order in env.dayOrder[env.cityTime]:  # 输入这个时段的订单
             originalOrderTime += order.orderDistance * 4 + 3
             courierList = env.action_collect(order)  # 适合的骑手
@@ -119,7 +123,7 @@ while dayIndex < maxDay:  # 利用30天的订单
             dayReward.append(reward)
         meanStepReward = round(float(np.mean(np.array(stepReward))), 4)
         stepRecorder.write(str(meanStepReward) + "\n")
-        print(f'time_step{T}: {meanStepReward}.')
+        #print(f'time_step{T}: {meanStepReward}.')
 
         if T == 179:
             for _ in range(20):
@@ -147,14 +151,14 @@ while dayIndex < maxDay:  # 利用30天的订单
     dayRecorder.write('day' + str(dayIndex) + 'meanEff:' + str(np.mean(np.array(courierAccEfficiency))) + '\n')
     dayRecorder.write('day' + str(dayIndex) + 'varEff:' + str(np.std(np.array(courierAccEfficiency))) + '\n')
     dayRecorder.write('day' + str(dayIndex) + 'overdueRate:' + str(round(env.overdueOrder / fullOrder, 4)) + '\n')
-    print(f'Day {dayIndex}: {meanDayReward}.')
-    print(f'Day {dayIndex}: {np.mean(np.array(courierAccEfficiency))}.')
-    print(f'Day{dayIndex}:{round(env.overdueOrder / fullOrder, 4)}.')
-    print(env.overdueOrder)
-    print(fullOrder)
-    print(f'Day{dayIndex}:{realOrderTime - originalOrderTime}.')
-    print(realOrderTime)
-    print(originalOrderTime)
+    print(f'Day {dayIndex}: mean reward: {meanDayReward}.')
+    print(f'Day {dayIndex}: mean efficiency for couriers: {np.mean(np.array(courierAccEfficiency))}.')
+    print(f'Day{dayIndex}: mean overdue rate for couriers: {round(env.overdueOrder / fullOrder, 4)}.')
+    print(f'Day{dayIndex}: Number of overdue orders in the day: {env.overdueOrder}.')
+    print(f'Day{dayIndex}: Number of orders in the day: {fullOrder}.')
+    #(f'Day{dayIndex}:{realOrderTime - originalOrderTime}.')
+    #print(realOrderTime)
+    #print(originalOrderTime)
     dayIndex += 1
 
 
@@ -164,7 +168,7 @@ dayRecorder.close()
 
 
 
-torch.save(agent,'../model/agent_seven(0.3,0.001).pth')
+#torch.save(agent,'../model/agent_seven(0.3,0.001).pth')
 
 
 

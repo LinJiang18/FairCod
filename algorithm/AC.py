@@ -135,9 +135,14 @@ class ActorCritic:
         self.criticOptimizer.zero_grad()
         self.actorOptimizer.zero_grad()
         criticLoss.backward()  # 计算critic网络的梯度
+#       print(f'Critic Loss: {criticLoss}')
         actorLoss.backward()  # 计算actor网络的梯度
+#       print(f'Actor Loss: {actorLoss}')
         self.criticOptimizer.step()  # 更新critic网络参数
         self.actorOptimizer.step()  # 更新actor网络参数
+
+
+
 
 class ReplayBuffer:
     def __init__(self, capacity,batchSize):

@@ -64,7 +64,7 @@ while dayIndex < maxDay:  # 利用30天的订单
 
     while T < maxTime:  # 这一天的时间
         dDict = {}
-        stepRecorder.write("step" + str(T) + ':' + ' ')
+        stepRecorder.write("step_info" + str(T) + ':' + ' ')
         for order in env.dayOrder[env.cityTime]: # 输入这个时段的订单
             originalOrderTime += order.orderDistance * 4 + 3
             courierList = env.action_collect(order)  # 适合的骑手
