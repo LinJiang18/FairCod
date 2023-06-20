@@ -143,7 +143,6 @@ class ActorCritic:
 
 
 
-
 class ReplayBuffer:
     def __init__(self, capacity,batchSize):
         self.buffer = collections.deque(maxlen=capacity)

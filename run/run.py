@@ -45,7 +45,7 @@ T = 0  # 一天的时间计数
 # ac:0.001
 #cr:0.0005
 actorLr = 0.001
-criticLr = 0.001
+criticLr = 0.00005
 
 gamma = 0.9
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
