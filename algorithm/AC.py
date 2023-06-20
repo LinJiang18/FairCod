@@ -55,8 +55,10 @@ class ActorCritic:
     def __init__(self, stateDim, actionDim, actorLr, criticLr, gamma, batchSize,device):
         self.actor = PolicyNet(stateDim,actionDim).to(device)
         self.critic = ValueNet(stateDim,actionDim).to(device)
-        self.actorOptimizer = torch.optim.Adam(self.actor.parameters(), lr=actorLr)
-        self.criticOptimizer = torch.optim.Adam(self.critic.parameters(), lr=criticLr)
+        self.actorLr = actorLr
+        self.criticLr = criticLr
+        self.actorOptimizer = torch.optim.Adam(self.actor.parameters(), lr=self.actorLr)
+        self.criticOptimizer = torch.optim.Adam(self.critic.parameters(), lr=self.criticLr)
         self.gamma = gamma
         self.stateDim = stateDim
         self.batchSize = batchSize
@@ -107,7 +109,7 @@ class ActorCritic:
         return c_id_.item(), softmax_V.detach()
     '''
 
-    def update(self, state,action,reward,nextState):
+    def update(self, state,action,reward,nextState,round):
         #state = [torch.tensor(s, dtype=torch.float).to(device) for s in state]   # state目前是一个
         action = torch.tensor(action).view(-1,1).to(device)
         reward = torch.tensor(reward, dtype=torch.float).to(device)
@@ -132,6 +134,9 @@ class ActorCritic:
         #log_probs = torch.log(self.actor(state).gather(1, action))
         actorLoss = torch.mean(-logProb * tdDelta.detach()).to(device)
 
+        if round % 5 == 0:
+            self.reset_learning_rate()
+
         self.criticOptimizer.zero_grad()
         self.actorOptimizer.zero_grad()
         criticLoss.backward()  # 计算critic网络的梯度
@@ -140,6 +145,10 @@ class ActorCritic:
 #       print(f'Actor Loss: {actorLoss}')
         self.criticOptimizer.step()  # 更新critic网络参数
         self.actorOptimizer.step()  # 更新actor网络参数
+
+    def reset_learning_rate(self):
+        self.criticLr = self.criticLr / 5
+        self.criticOptimizer.param_groups[0]['lr'] = self.criticLr
 
 
 

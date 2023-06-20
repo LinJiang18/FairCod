@@ -10,7 +10,7 @@ from simulator.utility import cal_distance,cal_best_route,cal_route_dir,process_
 
 
 dayIndex = 0  # 当前第几轮
-maxDay = 25 # 最大循环多少轮
+maxDay = 30 # 最大循环多少轮
 maxTime = 179 # 派单的轮数
 # hexagon grid
 
@@ -45,7 +45,7 @@ T = 0  # 一天的时间计数
 # ac:0.001
 #cr:0.0005
 actorLr = 0.001
-criticLr = 0.00005
+criticLr = 0.0001
 
 gamma = 0.9
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -128,7 +128,7 @@ while dayIndex < maxDay:  # 利用30天的订单
         if T == 179:
             for _ in range(20):
                 batchState, batchAction, batchReward, batchNextState = replayBuffer.sample()
-                agent.update(batchState, batchAction, batchReward, batchNextState)
+                agent.update(batchState, batchAction, batchReward, batchNextState,dayIndex+1)
 
     courierAccEfficiency = []
     for courier in env.courierList:
